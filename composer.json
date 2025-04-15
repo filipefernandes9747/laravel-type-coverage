@@ -2,6 +2,14 @@
   "name": "filipefernandes/laravel-type-coverage",
   "description": "Laravel code coverage tool for PHPDoc and type declarations",
   "license": "MIT",
+  "type": "library",
+  "keywords": [
+    "laravel",
+    "coverage",
+    "phpdoc",
+    "type",
+    "package"
+  ],
   "autoload": {
     "psr-4": {
       "Filipefernandes\\LaravelTypeCoverage\\": "src/"

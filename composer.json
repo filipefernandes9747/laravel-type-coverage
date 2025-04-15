@@ -1,0 +1,44 @@
+{
+  "name": "filipefernandes/laravel-type-coverage",
+  "description": "Laravel code coverage tool for PHPDoc and type declarations",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Filipefernandes\\LaravelTypeCoverage\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Filipefernandes\\LaravelTypeCoverage\\Tests\\": "tests/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Filipe Fernandes",
+      "email": "filipe.fernandes@latitudde.com"
+    }
+  ],
+  "minimum-stability": "stable",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Filipefernandes\\LaravelTypeCoverage\\LaravelTypeCoverageServiceProvider"
+      ]
+    }
+  },
+  "require": {
+    "php": "^8.0",
+    "symfony/finder": "^6.0",
+    "laravel/framework": "10.0"
+  },
+  "require-dev": {
+    "pestphp/pest": "^2.36",
+    "orchestra/testbench": "*",
+    "rector/rector": "^2.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "pestphp/pest-plugin": true
+    }
+  }
+}

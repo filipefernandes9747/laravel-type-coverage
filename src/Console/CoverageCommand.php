@@ -85,14 +85,16 @@ class CoverageCommand extends Command
 
         if (!empty($report)) {
             foreach ($report as $file => $entries) {
-                $this->line(" ------ " . str_pad("File   {$file}", 100, '-') . "\n");
-
+                $this->line("\n------" . str_repeat('-', 86));
+                $this->line("  File   {$file}");
+                $this->line("------" . str_repeat('-', 86));
+                $this->line("  Line   Message");
                 foreach ($entries as $entry) {
-                    $this->line("  {$entry['line']}   ⚠️  Method \033[1m{$entry['function']}\033[0m is {$entry['issues']}.");
-                    $this->line("        💡 Consider adding type declarations or PHPDoc for better coverage.");
+                    $this->line("{$entry['line']}      ⚠️  Method \033[1m{$entry['function']}\033[0m is {$entry['issues']}.");
+                    $this->line("         💡 Consider adding type declarations or PHPDoc for better coverage.");
                 }
-
-                $this->line(" ------ " . str_repeat('-', 100) . "\n");
+                $this->line("------" . str_repeat('-', 86) . "\n");
+                $this->line("\n");
             }
         }
 

@@ -106,7 +106,7 @@ class CoverageCommand extends Command
 
         if ($exportable) {
             $path = $exportable ?? config('type-coverage.export_path', '');
-            $filename = 'laravel-type-coverage' . now()->format('Y-m-d H:i:s') . '.json';
+            $filename = 'laravel-type-coverage_' . now()->format('Y-m-d_H-i-s') . '.json';
 
             // Ensure the directory exists
             if ($path && !file_exists($path)) {
@@ -117,7 +117,10 @@ class CoverageCommand extends Command
             $fullFilePath = $path ? rtrim($path, '/') . '/' . $filename : $filename;
 
             // Export the results to the file
-            file_put_contents($fullFilePath, json_encode($report, JSON_PRETTY_PRINT));
+            if (file_put_contents($fullFilePath, json_encode($report, JSON_PRETTY_PRINT)) === false) {
+                $this->error("Failed to write coverage report to: {$fullFilePath}");
+                return Command::FAILURE;
+            }
             $this->info("Coverage report exported to: {$filename}");
         }
 

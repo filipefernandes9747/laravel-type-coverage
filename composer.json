@@ -37,7 +37,7 @@
   "require": {
     "php": "^8.0",
     "symfony/finder": "^6.0",
-    "laravel/framework": "10.0"
+    "laravel/framework": "^10.0"
   },
   "require-dev": {
     "pestphp/pest": "^2.36",

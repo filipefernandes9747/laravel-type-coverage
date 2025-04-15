@@ -41,14 +41,32 @@ class FunctionAnalyzer
                     $functionName = $token[1];
                     $hasDoc = $doc !== null;
 
-                    // Simple heuristic: check if the next tokens have a colon (:) for return type
                     $hasType = false;
-                    if ($level >= self::LEVEL_STRICT) {
-                        for ($j = $i; $j < $i + 10 && isset($tokens[$j]); $j++) {
-                            if (is_array($tokens[$j])) continue;
-                            if ($tokens[$j] === ':') {
-                                $hasType = true;
-                                break;
+
+                    // Look ahead for a colon followed by a return type
+                    for ($j = $i; $j < $i + 10 && isset($tokens[$j]); $j++) {
+                        $current = $tokens[$j];
+
+                        // Ensure it's not an array token (like whitespace or comments)
+                        if (is_array($current)) {
+                            continue;
+                        }
+
+                        // Check for colon (indicating return type declaration)
+                        if ($current === ':') {
+                            // Now peek ahead for the return type
+                            for ($k = $j + 1; $k < $j + 5 && isset($tokens[$k]); $k++) {
+                                $returnToken = $tokens[$k];
+                                if (is_array($returnToken)) {
+                                    if (in_array($returnToken[0], [T_STRING, T_NAME_QUALIFIED, T_STATIC, T_ARRAY, T_CALLABLE])) {
+                                        $hasType = true;
+                                        break 2; // break both loops
+                                    }
+                                } elseif ($returnToken === '?' || $returnToken === '\\') {
+                                    // nullable type or namespaced type
+                                    $hasType = true;
+                                    break 2;
+                                }
                             }
                         }
                     }

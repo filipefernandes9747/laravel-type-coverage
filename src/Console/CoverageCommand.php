@@ -89,12 +89,13 @@ class CoverageCommand extends Command
                 $this->line("  File   {$file}");
                 $this->line("------" . str_repeat('-', 86));
                 $this->line("  Line   Message");
+                $this->line("------" . str_repeat('-', 86));
+
                 foreach ($entries as $entry) {
-                    $this->line("{$entry['line']}      ⚠️  Method \033[1m{$entry['function']}\033[0m is {$entry['issues']}.");
+                    $this->line("  {$entry['line']}    ⚠️  Method \033[1m{$entry['function']}\033[0m is {$entry['issues']}.");
                     $this->line("         💡 Consider adding type declarations or PHPDoc for better coverage.");
                 }
                 $this->line("------" . str_repeat('-', 86) . "\n");
-                $this->line("\n");
             }
         }
 

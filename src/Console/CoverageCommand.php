@@ -105,19 +105,19 @@ class CoverageCommand extends Command
         $this->info("📊 Coverage: {$percentage}%");
 
         if ($exportable) {
-            $path = config('type-coverage.export_path', '');
-            $filename = 'laravel-type-coverage.json';
+            $path = $exportable ?? config('type-coverage.export_path', '');
+            $filename = 'laravel-type-coverage' . now()->format('Y-m-d H:i:s') . '.json';
 
-            if ($path) {
-                $path = rtrim($path, '/') . '/';
-                $filename = $path . $filename;
+            // Ensure the directory exists
+            if ($path && !file_exists($path)) {
+                mkdir($path, 0777, true);
             }
 
-            if (!file_exists(dirname($filename))) {
-                mkdir(dirname($filename), 0777, true);
-            }
+            // Combine path and filename
+            $fullFilePath = $path ? rtrim($path, '/') . '/' . $filename : $filename;
 
-            file_put_contents($filename, json_encode($report, JSON_PRETTY_PRINT));
+            // Export the results to the file
+            file_put_contents($fullFilePath, json_encode($report, JSON_PRETTY_PRINT));
             $this->info("Coverage report exported to: {$filename}");
         }
 

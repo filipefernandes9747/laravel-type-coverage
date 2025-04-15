@@ -62,14 +62,17 @@ When you run the command, you’ll see output like this:
 ```
 Running Laravel Type Coverage...
 Scanning for PHP files...
-  ------ app/Models/User.php -------------------------------------------
+
+--------------------------------------------------------------------------------------------
+  File   app/Models/ZipCode.php
+--------------------------------------------------------------------------------------------
   Line   Message
-  ----------------------------------------------------------------------
-  :12    ⚠️ getFullName is missing type hints.
+--------------------------------------------------------------------------------------------
+  :83    ⚠️  Method getFullZipCodeAttribute is missing type hints.
          💡 Consider adding type declarations or PHPDoc for better coverage.
-  :18    ⚠️ getAge is missing PHPDoc and missing type hints.
+  :92    ⚠️  Method getFullZipCodeInfoAttribute is missing PHPDoc and missing type hints.
          💡 Consider adding type declarations or PHPDoc for better coverage.
-  ----------------------------------------------------------------------
+--------------------------------------------------------------------------------------------
 
 Coverage: 85%
 ```

@@ -69,8 +69,8 @@ class CoverageCommand extends Command
                     $message = "\u{26A0}\u{FE0F} {$result['function']} is " . implode(' and ', $msgParts) . ".";
                     $message .= "\n     \u{1F4A1} Consider adding type declarations or PHPDoc for better coverage.";
 
-                    $basePath = base_path();
-                    $relativePath = ltrim(str_replace($basePath, '', str_replace('\\', '/', $file->getRealPath())), '/');
+                    $relativePath = str_replace(base_path() . DIRECTORY_SEPARATOR, '', $file->getRealPath());
+                    $relativePath = str_replace(DIRECTORY_SEPARATOR, '/', $relativePath); // Ensure consistency with slashes
 
                     $report[$relativePath][] = [
                         'line' => ":{$line}",
@@ -88,7 +88,7 @@ class CoverageCommand extends Command
                 $this->line(" ------ " . str_pad("File   {$file}", 100, '-') . "\n");
 
                 foreach ($entries as $entry) {
-                    $this->line("  {$entry['line']}   ⚠️ Method {$entry['function']} is {$entry['issues']}.");
+                    $this->line("  {$entry['line']}   ⚠️  Method {$entry['function']} is {$entry['issues']}.");
                     $this->line("         💡 Consider adding type declarations or PHPDoc for better coverage.");
                 }
 

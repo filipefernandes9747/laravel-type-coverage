@@ -74,7 +74,8 @@ class CoverageCommand extends Command
 
                     $report[$relativePath][] = [
                         'line' => ":{$line}",
-                        'message' => $message,
+                        'function' => $result['function'],
+                        'issues' => implode(' and ', $msgParts),
                     ];
                 }
             }
@@ -84,16 +85,14 @@ class CoverageCommand extends Command
 
         if (!empty($report)) {
             foreach ($report as $file => $entries) {
-                $this->line("\n  File: {$file}");
-                $this->line(str_repeat('─', 108));
-                $this->line(str_pad(' Line ', 8) . 'Message');
-                $this->line(str_repeat('─', 108));
+                $this->line(" ------ " . str_pad("File   {$file}", 100, '-') . "\n");
 
                 foreach ($entries as $entry) {
-                    $this->line(str_pad(" {$entry['line']}", 8) . "{$entry['message']}");
+                    $this->line("  {$entry['line']}   ⚠️ Method {$entry['function']} is {$entry['issues']}.");
+                    $this->line("         💡 Consider adding type declarations or PHPDoc for better coverage.");
                 }
 
-                $this->line(str_repeat('─', 108));
+                $this->line(" ------ " . str_repeat('-', 100) . "\n");
             }
         }
 

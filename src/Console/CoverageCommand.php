@@ -102,9 +102,10 @@ class CoverageCommand extends Command
         }
 
         $percentage = $total ? round(($covered / $total) * 100, 2) : 100;
-
+        $totalFiles = count($report);
         $this->info("✅ $covered / $total functions are documented and typed");
         $this->info("📊 Coverage: {$percentage}%");
+        $this->info("📁 Files with issues: {$totalFiles}");
 
         if ($exportable) {
             $path = $exportable ?? config('type-coverage.export_path', '');

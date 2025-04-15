@@ -16,7 +16,8 @@ class CoverageCommand extends Command
     protected $signature = 'laravel-type-coverage:run
                             {--path= : Comma-separated list of paths to scan}
                             {--fail-under= : Minimum coverage percentage to pass}
-                            {--ignore= : Comma-separated list of paths to ignore}';
+                            {--ignore= : Comma-separated list of paths to ignore}
+                            {--export= : Export the report to a file}';
 
     /**
      * The console command description.
@@ -37,6 +38,8 @@ class CoverageCommand extends Command
         $paths = $this->option('path') ? explode(',', $this->option('path')) : config('type-coverage.paths', ['app']);
         $ignore = $this->option('ignore') ? explode(',', $this->option('ignore')) : config('type-coverage.ignore', []);
         $failUnder = $this->option('fail-under') ?: config('type-coverage.fail_under', 80);
+        $exportable = $this->option('export') ?: config('type-coverage.export', true);
+
 
         $files = FileScanner::getPhpFiles($paths, $ignore);
 
@@ -93,6 +96,31 @@ class CoverageCommand extends Command
         $this->info("📊 Coverage: {$percentage}%");
 
 
+        if ($exportable) {
+            // Get the export path from the configuration, fallback to the current directory if not defined
+            $path = config('type-coverage.export_path', '');
+
+            // Default filename
+            $filename = 'laravel-type-coverage.json';
+
+            // If the path is specified, append it to the filename
+            if ($path) {
+                // Ensure the path ends with a slash, otherwise, append one
+                $path = rtrim($path, '/') . '/';
+                $filename = $path . $filename;
+            }
+
+            // Create the directory if it doesn't exist
+            if (!file_exists(dirname($filename))) {
+                mkdir(dirname($filename), 0777, true);
+            }
+
+            // Write the coverage report to the file
+            file_put_contents($filename, json_encode($report, JSON_PRETTY_PRINT));
+
+            // Optionally, output the file path for confirmation
+            $this->info("Coverage report exported to: {$filename}");
+        }
 
         if ($percentage < $failUnder) {
             return Command::FAILURE;

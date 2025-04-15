@@ -6,4 +6,5 @@ return [
     'ignore' => [],
     'export' => true,
     'export_path' => '',
+    'level' => \Filipefernandes\LaravelTypeCoverage\Scanner\FunctionAnalyzer::LEVEL_BASIC,
 ];

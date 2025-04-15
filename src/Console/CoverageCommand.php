@@ -17,6 +17,7 @@ class CoverageCommand extends Command
                             {--path= : Comma-separated list of paths to scan}
                             {--fail-under= : Minimum coverage percentage to pass}
                             {--ignore= : Comma-separated list of paths to ignore}
+                            {--level= : Level of strictness (0: none, 1: basic, 2: strict)}
                             {--export= : Export the report to a file}';
 
     /**
@@ -39,6 +40,7 @@ class CoverageCommand extends Command
         $ignore = $this->option('ignore') ? explode(',', $this->option('ignore')) : config('type-coverage.ignore', []);
         $failUnder = $this->option('fail-under') ?: config('type-coverage.fail_under', 80);
         $exportable = $this->option('export') ?: config('type-coverage.export', true);
+        $level = $this->option('level') ?: config('type-coverage.level', FunctionAnalyzer::LEVEL_BASIC);
 
         $files = FileScanner::getPhpFiles($paths, $ignore);
 
@@ -48,7 +50,7 @@ class CoverageCommand extends Command
         $report = [];
 
         foreach ($files as $file) {
-            $results = FunctionAnalyzer::analyze($file->getRealPath());
+            $results = FunctionAnalyzer::analyze($file->getRealPath(), $level);
 
             foreach ($results as $result) {
                 $total++;

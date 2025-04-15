@@ -51,10 +51,22 @@ class CoverageCommand extends Command
                 if ($result['has_doc'] && $result['has_type']) {
                     $covered++;
                 } else {
-                    $this->line("✘ {$result['function']} in {$file->getRelativePathname()}");
+                    $line = $result['line'] ?? '?';
+                    $message = [];
+
+                    if (!$result['has_doc']) {
+                        $message[] = 'missing PHPDoc';
+                    }
+
+                    if (!$result['has_type']) {
+                        $message[] = 'missing type hints';
+                    }
+
+                    $this->line("{$file->getRelativePathname()}:{$line}: {$result['function']} is " . implode(' and ', $message));
                 }
             }
         }
+
 
         $percentage = $total ? round(($covered / $total) * 100, 2) : 100;
 

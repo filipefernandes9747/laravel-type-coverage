@@ -48,6 +48,7 @@ class FunctionAnalyzer
                         'function' => $functionName,
                         'has_doc' => $hasDoc,
                         'has_type' => $hasType,
+                        'line' => $token[2] ?? null,
                     ];
 
                     $doc = null;

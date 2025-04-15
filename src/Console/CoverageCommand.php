@@ -40,7 +40,6 @@ class CoverageCommand extends Command
         $failUnder = $this->option('fail-under') ?: config('type-coverage.fail_under', 80);
         $exportable = $this->option('export') ?: config('type-coverage.export', true);
 
-
         $files = FileScanner::getPhpFiles($paths, $ignore);
 
         $total = 0;
@@ -67,26 +66,34 @@ class CoverageCommand extends Command
                         $msgParts[] = 'missing type hints';
                     }
 
-                    $report[$file->getRelativePathname()][] = [
+                    $message = "\u{26A0}\u{FE0F} {$result['function']} is " . implode(' and ', $msgParts) . ".";
+                    $message .= "\n     \u{1F4A1} Consider adding type declarations or PHPDoc for better coverage.";
+
+                    $basePath = base_path();
+                    $relativePath = ltrim(str_replace($basePath, '', str_replace('\\', '/', $file->getRealPath())), '/');
+
+                    $report[$relativePath][] = [
                         'line' => ":{$line}",
-                        'message' => "{$result['function']} is " . implode(' and ', $msgParts) .
-                            "\n 💡 Add type declarations or PHPDoc for better coverage.",
+                        'message' => $message,
                     ];
                 }
             }
         }
 
+        ksort($report);
+
         if (!empty($report)) {
             foreach ($report as $file => $entries) {
-                $this->line("\n ------ " . str_pad("{$file}", 86, '-') . "\n");
-                $this->line("  File   {$file}");
-                $this->line(" ------ " . str_repeat('-', 86));
+                $this->line("\n  File: {$file}");
+                $this->line(str_repeat('─', 108));
+                $this->line(str_pad(' Line ', 8) . 'Message');
+                $this->line(str_repeat('─', 108));
 
                 foreach ($entries as $entry) {
-                    $this->line("  {$entry['line']}   {$entry['message']}");
+                    $this->line(str_pad(" {$entry['line']}", 8) . "{$entry['message']}");
                 }
 
-                $this->line(" ------ " . str_repeat('-', 86) . "\n");
+                $this->line(str_repeat('─', 108));
             }
         }
 
@@ -95,37 +102,23 @@ class CoverageCommand extends Command
         $this->info("✅ $covered / $total functions are documented and typed");
         $this->info("📊 Coverage: {$percentage}%");
 
-
         if ($exportable) {
-            // Get the export path from the configuration, fallback to the current directory if not defined
             $path = config('type-coverage.export_path', '');
-
-            // Default filename
             $filename = 'laravel-type-coverage.json';
 
-            // If the path is specified, append it to the filename
             if ($path) {
-                // Ensure the path ends with a slash, otherwise, append one
                 $path = rtrim($path, '/') . '/';
                 $filename = $path . $filename;
             }
 
-            // Create the directory if it doesn't exist
             if (!file_exists(dirname($filename))) {
                 mkdir(dirname($filename), 0777, true);
             }
 
-            // Write the coverage report to the file
             file_put_contents($filename, json_encode($report, JSON_PRETTY_PRINT));
-
-            // Optionally, output the file path for confirmation
             $this->info("Coverage report exported to: {$filename}");
         }
 
-        if ($percentage < $failUnder) {
-            return Command::FAILURE;
-        }
-
-        return Command::SUCCESS;
+        return $percentage < $failUnder ? Command::FAILURE : Command::SUCCESS;
     }
 }

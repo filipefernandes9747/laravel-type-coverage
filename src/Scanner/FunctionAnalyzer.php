@@ -99,17 +99,13 @@ class FunctionAnalyzer
                     }
 
                     // Add results based on level
-                    if (
-                        ($level === self::LEVEL_BASIC && !$hasDoc) ||
-                        ($level === self::LEVEL_STRICT && (!$hasDoc || !$hasType))
-                    ) {
-                        $results[] = [
-                            'function' => $functionName,
-                            'has_doc' => $hasDoc,
-                            'has_type' => $hasType,
-                            'line' => $line,
-                        ];
-                    }
+                    $results[] = [
+                        'function' => $functionName,
+                        'has_doc' => $hasDoc,
+                        'has_type' => $hasType,
+                        'line' => $line,
+                    ];
+
 
                     // Reset state for the next function
                     $doc = null;

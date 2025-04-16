@@ -64,51 +64,13 @@ class FunctionAnalyzer
 
                     // Simple heuristic: check if the next tokens have a colon (:) for return type
                     $hasType = false;
-
-                    for ($j = $i; $j < count($tokens); $j++) {
-                        $nextToken = $tokens[$j];
-
-                        if (is_array($nextToken)) {
-                            // Skip whitespace/comments
-                            if (in_array($nextToken[0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT])) {
-                                continue;
-                            }
-                        }
-
-                        if ($nextToken === '(') {
-                            // We've reached the parameter list, continue until closing )
-                            $parenCount = 1;
-                            $j++;
-                            while ($j < count($tokens) && $parenCount > 0) {
-                                if ($tokens[$j] === '(') {
-                                    $parenCount++;
-                                } elseif ($tokens[$j] === ')') {
-                                    $parenCount--;
-                                }
-                                $j++;
-                            }
-
-                            // Now look ahead for colon and return type
-                            while ($j < count($tokens)) {
-                                $token = $tokens[$j];
-
-                                if (is_array($token) && in_array($token[0], [T_WHITESPACE])) {
-                                    $j++;
-
-                                    continue;
-                                }
-
-                                if ($token === ':') {
-                                    // Found return type declaration
-                                    $hasType = true;
-                                    break;
-                                }
-
-                                // No colon = no return type
+                    if ($level >= self::LEVEL_STRICT) {
+                        for ($j = $i; $j < $i + 10 && isset($tokens[$j]); $j++) {
+                            if (is_array($tokens[$j])) continue;
+                            if ($tokens[$j] === ':') {
+                                $hasType = true;
                                 break;
                             }
-
-                            break;
                         }
                     }
 

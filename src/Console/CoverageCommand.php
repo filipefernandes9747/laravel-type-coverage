@@ -56,7 +56,7 @@ class CoverageCommand extends Command
                 $total++;
 
                 $basicLevel = ($level === FunctionAnalyzer::LEVEL_BASIC && $result['has_doc']);
-                $strictLevel = ($level === FunctionAnalyzer::LEVEL_STRICT && ($result['has_doc'] || $result['has_type']));
+                $strictLevel = ($level === FunctionAnalyzer::LEVEL_STRICT && ($result['has_doc'] && $result['has_type']));
 
                 if ($basicLevel || $strictLevel) {
                     $covered++;

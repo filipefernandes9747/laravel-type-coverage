@@ -17,7 +17,7 @@ class FunctionAnalyzer
      * @param  int  $level  Level of strictness (0: none, 1: basic, 2: strict).
      * @return array List of functions with their coverage status.
      */
-    public static function analyze(string $filePath, int $level = self::LEVEL_BASIC): array
+    public static function analyze(string $filePath, int $level = self::LEVEL_BASIC, array $excluded = []): array
     {
         $code = file_get_contents($filePath);
         $tokens = token_get_all($code, TOKEN_PARSE);
@@ -132,14 +132,20 @@ class FunctionAnalyzer
                     }
                 }
 
+                $excludedFunctionNames = array_merge([
+                    '__construct'
+                ], $excluded);
+
                 // Add results
-                $results[] = [
-                    'function' => $functionName,
-                    'has_doc' => $hasDoc,
-                    'has_type' => $hasType,
-                    'is_closure' => $isClosure,
-                    'line' => $line,
-                ];
+                if (!in_array($functionName, $excludedFunctionNames)) {
+                    $results[] = [
+                        'function' => $functionName,
+                        'has_doc' => $hasDoc,
+                        'has_type' => $hasType,
+                        'is_closure' => $isClosure,
+                        'line' => $line,
+                    ];
+                }
 
                 // Reset state for the next function
                 $doc = null;

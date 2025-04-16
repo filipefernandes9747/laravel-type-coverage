@@ -25,6 +25,7 @@ class FunctionAnalyzer
         $results = [];
         $doc = null;
         $isFunction = false;
+        $isClosure = false;
         $line = null;
 
         foreach ($tokens as $i => $token) {
@@ -37,7 +38,20 @@ class FunctionAnalyzer
                 // Identify functions
                 if ($token[0] === T_FUNCTION) {
                     $isFunction = true;
+
+                    // Look ahead to see if it's a named function or a closure
+                    $k = $i + 1;
+                    while (isset($tokens[$k]) && is_array($tokens[$k]) && $tokens[$k][0] === T_WHITESPACE) {
+                        $k++;
+                    }
+
+                    $isClosure = true;
+
+                    if (isset($tokens[$k]) && is_array($tokens[$k]) && $tokens[$k][0] === T_STRING) {
+                        $isClosure = false;
+                    }
                 }
+
 
                 if (is_numeric($token[2])) {
                     $line = $token[2];
@@ -46,7 +60,7 @@ class FunctionAnalyzer
                 // Analyze function names and coverage
                 if ($isFunction && $token[0] === T_STRING) {
                     $functionName = $token[1];
-                    $hasDoc = $doc !== null;
+                    $hasDoc = !$isClosure && $doc !== null;
 
                     // Simple heuristic: check if the next tokens have a colon (:) for return type
                     $hasType = false;
@@ -103,6 +117,7 @@ class FunctionAnalyzer
                         'function' => $functionName,
                         'has_doc' => $hasDoc,
                         'has_type' => $hasType,
+                        'is_closure' => $isClosure,
                         'line' => $line,
                     ];
 
@@ -110,6 +125,7 @@ class FunctionAnalyzer
                     // Reset state for the next function
                     $doc = null;
                     $isFunction = false;
+                    $isClosure = false;
                     $line = null;
                 }
             }

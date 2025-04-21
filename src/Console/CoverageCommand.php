@@ -108,7 +108,7 @@ class CoverageCommand extends Command
         $percentage = $total ? round(($covered / $total) * 100, 2) : 100;
         $totalFiles = count($report);
         $this->info("✅ $covered / $total functions are documented and typed");
-        $this->{$percentage < $failUnder ? 'info' : 'error'}("📊 Coverage: {$percentage}%");
+        $this->{$percentage > $failUnder ? 'info' : 'error'}("📊 Coverage: {$percentage}%");
         $this->info("📁 Files with issues: {$totalFiles}");
 
         if ($exportable) {
